@@ -1,5 +1,6 @@
 const { get, set } = require('./db/simple-db');
-const { BadRequest, BadCredential } = require('./exception');
+const { BadRequest, BadCredential, NotMatchUserInfo } = require('./exception');
+const { users} = require('./db/initial-data.json');
 
 const TOKEN_LENGTH = 32;
 const LETTERS = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'.split('');
@@ -19,16 +20,24 @@ const saveSession = (user) => {
 
 const login = (req, res, next) => {
     const { username, password } = req.body;
+
     if(!(username && password)) {
-        throw new BadRequest('username과 password는 필수 값입니다.');
+        throw new BadRequest('사용자명 비밀번호는 필수 값입니다.');
     }
+
+    const filteredUser = users.filter( (v, i) => v.id === username && v.password === password ) || [];
+
+    if (filteredUser.length <= 0)
+        throw new BadRequest('사용자명 혹은 비밀번호가 일치하지 않습니다.');
+
 
     const user = get('users', username);
 
     if(user) {
         res.json({
-            token: saveSession(user),
-            username: username
+            token: saveSession(user)
+            , username
+            , status: 200
         })
     } else {
         throw new BadCredential();
