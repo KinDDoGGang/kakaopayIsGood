@@ -52,6 +52,7 @@ export default function WorkRequest() {
             { field: "title", headerName: "제목", flex: 1 },
             { field: "requestedBy", headerName: "작성자", flex: 1 },
             { field: "date", headerName: "작성일시", flex: 1 },
+            { field: "totList", headerName: "", flex: 1, hide: true },
         ];
 
         return result;
@@ -64,6 +65,7 @@ export default function WorkRequest() {
                 , title : v['title'] || ''
                 , requestedBy : v['requestedBy']
                 , date : makeDate(new Date(v['createdAt']))
+                , totList : v
             }    
         })
     }

@@ -12,7 +12,7 @@ export default function CustomInput({fullWidth}) {
             noValidate
             autoComplete="off"
         >
-            <TextField id="outlined-basic" label="Outlined" variant="outlined" />
+            <TextField id="outlined-basic" label="제목을 입력하세요" variant="outlined"/>
       </Box>
     )
 }

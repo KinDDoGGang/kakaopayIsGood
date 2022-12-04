@@ -22,6 +22,13 @@ export default function WorkRequestFormList() {
     console.log('workRequestList >> ',workRequestList);
   }, []);
   
+  /* TODO 여기 cell 클릭 했을 때, data 뿌려주면서 상세화면으로 이동필요, 상세화면일 경우에는 승인 버튼도 존재할 수 있음 */
+  const onCellClick = (GridCellParams, e, callback) => {
+    console.log('GridCellParams', GridCellParams);
+    console.log('event', e);
+    console.log('callback cellClick', callback);
+  }
+
 
   const [pageSize, setPageSize] = React.useState(25);
 
@@ -53,6 +60,7 @@ export default function WorkRequestFormList() {
                 pagination
                 rows={workRequestList['rows']}
                 columns={workRequestList['columns']}
+                onCellClick={onCellClick}
               />
             </div>
           </Paper>
