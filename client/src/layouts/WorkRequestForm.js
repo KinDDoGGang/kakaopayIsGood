@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from 'react';
+import {useOutletContext } from 'react-router-dom';
+
 import CssBaseline from '@mui/material/CssBaseline';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
@@ -9,17 +11,19 @@ import Stepper from '@mui/material/Stepper';
 import Step from '@mui/material/Step';
 import StepLabel from '@mui/material/StepLabel';
 import Button from '@mui/material/Button';
-import CustomDropdownList from '../components/CustomDropdownList/CustomDropdownList';
-import CustomInput from '../components/CustomInput/CustomInput';
 import Grid from '@mui/material/Grid';
-import {useOutletContext } from 'react-router-dom';
-
 import Typography from '@mui/material/Typography';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
+
+import CustomDropdownList from '../components/CustomDropdownList/CustomDropdownList';
+import CustomInput from '../components/CustomInput/CustomInput';
+import CustomLogout from '../components/CustomLogout/CustomLogout';
+
+
 import AddressForm from '../layouts/AddresForm';
 
-// import PaymentForm from './PaymentForm';
-// import Review from './Review';
+/** TODO 시간되면 상단에 로그인한 사용자명 표시해줘도 좋을 듯, 로그아웃버튼 추가하고 */
+
 
 /* step 밑에 dropdownbox 추가 */
 const permissionSteps = ['승인 요청', '처리 중', '처리 완료'];
@@ -44,13 +48,20 @@ const theme = createTheme();
 
 export default function WorkRequestForm () {
     const callbackTemplate = (callbackTemplate) => {
+        console.log('callbackTemplate >> ',callbackTemplate);
         setSelectedTemplate(callbackTemplate);
+    }
+
+    const callbackUser = (callbackUser) => {
+        console.log('callbackUSer', callbackUser);
+        setSelectedUser(callbackUser);
     }
 
     const [activeStep, setActiveStep] = useState(0);
     const [selectedTemplate, setSelectedTemplate] = useState('1');
+    const [selectedUser, setSelectedUser] = useState('1');
 
-    const { templateList } = useOutletContext();
+    const { templateList, userList } = useOutletContext();
 
     useEffect(
          () => {
@@ -79,7 +90,7 @@ export default function WorkRequestForm () {
         >
             <Toolbar>
             <Typography variant="h6" color="inherit" noWrap >
-            홈 이미지 / 요청 하기
+            홈 이미지 / 요청 하기 <CustomLogout />
             </Typography>
             </Toolbar>
         </AppBar>
@@ -93,19 +104,26 @@ export default function WorkRequestForm () {
                     TemplateList={templateList}
                     placeText={'요청 양식을 선택해주세요'}
                     mSize={1}
-                    callbackTemplate={callbackTemplate}
+                    callback={callbackTemplate}
                 /> 
+                <br></br>
                 <Typography variant="h5" color="inherit" noWrap >요청제목</Typography>
                 <CustomInput 
                     fullWidth
                 />
+                <br></br>
+                <Typography variant="h5" color="inherit" noWrap >담당자 설정</Typography>
                 {
                 Number(selectedTemplate || '1') === 1 ?
                     <Stepper activeStep={activeStep} sx={{ pt: 3, pb: 5 }}>
                         {permissionSteps.map( (label, index) => (
                         <Step key={label}>
                             <StepLabel>{label}</StepLabel>
-                            { index !== permissionSteps.length-1 && <CustomDropdownList size={150} TemplateList={[]} placeText={'담당자 선택'} mSize={0}/> }
+                            <br></br>
+                            {
+                                index !== permissionSteps.length-1 && 
+                                <CustomDropdownList size={150} TemplateList={userList} placeText={'담당자 선택'} mSize={0} callback={callbackUser} /> 
+                            }
                         </Step>
                         ))}
                     </Stepper>
@@ -114,7 +132,8 @@ export default function WorkRequestForm () {
                 {firewallSteps.map( (label, index) => (
                 <Step key={label}>
                     <StepLabel>{label}</StepLabel>
-                    { index !== firewallSteps.length-1 && <CustomDropdownList size={150} TemplateList={[]} placeText={'담당자 선택'} mSize={0}/> }
+                    { 
+                        index !== firewallSteps.length-1 && <CustomDropdownList size={150} TemplateList={userList} placeText={'담당자 선택'} mSize={0} callback={callbackUser} /> }
                 </Step>
                 ))}
             </Stepper>
